@@ -49,9 +49,9 @@ pipeline {
                     sh """
                         ssh -o StrictHostKeyChecking=no ubuntu@${EC2_IP} '
                             cd crud-dd-task-mean-app
-                            docker-compose pull
-                            docker-compose down
-                            docker-compose up -d
+                            docker compose pull
+                            docker compose down
+                            docker compose up -d
                         '
                     """
                 }
