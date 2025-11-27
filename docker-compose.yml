@@ -1,0 +1,45 @@
+version: "3.8"
+services:
+  mongo:
+    image: mongo:6.0
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: examplepassword
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - appnet
+
+  backend:
+    image: ashfak9673/backend:latest
+    build: ./backend
+    environment:
+      MONGO_URL: mongodb://root:examplepassword@mongo:27017/mean?authSource=admin
+    networks:
+      - appnet
+    depends_on:
+      - mongo
+
+  frontend:
+    image: ashfak9673/frontend:latest
+    build: ./frontend
+    networks:
+      - appnet
+
+  nginx:
+    image: nginx:stable-alpine
+    restart: unless-stopped
+    volumes:
+      - ./nginx-proxy.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - appnet
+
+networks:
+  appnet:
+volumes:
+  mongo-data:
